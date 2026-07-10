@@ -1,11 +1,30 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Spring Security Example</title>
+    <meta charset="UTF-8">
+    <title>Личный кабинет</title>
+    <style>
+        body { font-family: Arial; margin: 50px; }
+        .info { border: 1px solid #ccc; padding: 20px; width: 450px; }
+        .label { font-weight: bold; }
+        .actions { margin-top: 20px; }
+    </style>
 </head>
 <body>
-<h1>User, welcome spring boot security page!</h1>
-
-
+<h2>Личный кабинет</h2>
+<div class="info">
+    <p><span class="label">Логин:</span> <span th:text="${user.username}"/></p>
+    <p><span class="label">Email:</span> <span th:text="${user.email}"/></p>
+    <p><span class="label">Имя:</span> <span th:text="${user.firstName}"/></p>
+    <p><span class="label">Фамилия:</span> <span th:text="${user.lastName}"/></p>
+    <p><span class="label">Возраст:</span> <span th:text="${user.age}"/></p>
+    <p><span class="label">Роли:</span> <span th:text="${user.roles}"/></p>
+</div>
+<div class="actions">
+    <a href="/">На главную</a> |
+    <form th:action="@{/logout}" method="post" style="display: inline;">
+        <button type="submit">Выйти</button>
+    </form>
+</div>
 </body>
 </html>

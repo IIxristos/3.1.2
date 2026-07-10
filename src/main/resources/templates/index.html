@@ -1,11 +1,39 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <title>Spring Security Example</title>
+    <meta charset="UTF-8">
+    <title>Главная</title>
+    <style>
+        body { font-family: Arial; margin: 50px; }
+        .links { margin-top: 20px; }
+        .links a { display: block; margin: 5px 0; }
+        .logout-form { display: inline; }
+    </style>
 </head>
 <body>
-<h1>Welcome to Index PAGE!</h1>
+<h1>Добро пожаловать!</h1>
 
+<div sec:authorize="isAuthenticated()">
+    <p>Вы вошли как <strong><span sec:authentication="name"></span></strong></p>
+    <p>Ваши роли: <span sec:authentication="principal.authorities"></span></p>
 
+    <div class="links">
+        <div sec:authorize="hasRole('ADMIN')">
+            <a href="/admin">Перейти в панель администратора</a>
+        </div>
+        <div sec:authorize="hasRole('USER')">
+            <a href="/user">Перейти на страницу пользователя</a>
+        </div>
+    </div>
+
+    <form class="logout-form" th:action="@{/logout}" method="post">
+        <button type="submit">Выйти</button>
+    </form>
+</div>
+
+<div sec:authorize="!isAuthenticated()">
+    <p><a href="/login">Войти в систему</a></p>
+</div>
 </body>
 </html>
