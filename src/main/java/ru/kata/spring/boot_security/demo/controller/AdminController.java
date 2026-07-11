@@ -14,21 +14,19 @@ import java.util.Set;
 public class AdminController {
 
     private final UserService userService;
-    private final RoleService roleService;
+    private final RoleService roleService; // оставляем для отображения списка ролей
 
     public AdminController(UserService userService, RoleService roleService) {
         this.userService = userService;
         this.roleService = roleService;
     }
 
-    // Список всех пользователей
     @GetMapping
     public String listUsers(Model model) {
         model.addAttribute("users", userService.findAll());
         return "admin/users";
     }
 
-    // Форма добавления нового пользователя
     @GetMapping("/add")
     public String showAddForm(Model model) {
         model.addAttribute("user", new User());
@@ -36,18 +34,13 @@ public class AdminController {
         return "admin/addUser";
     }
 
-    // Сохранение нового пользователя
     @PostMapping("/add")
     public String addUser(@ModelAttribute User user,
                           @RequestParam(required = false) Set<Long> roleIds) {
-        if (roleIds != null && !roleIds.isEmpty()) {
-            user.setRoles(roleService.findByIds(roleIds));
-        }
-        userService.save(user);
+        userService.createUser(user, roleIds);
         return "redirect:/admin";
     }
 
-    // Форма редактирования пользователя
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable Long id, Model model) {
         User user = userService.findById(id);
@@ -59,25 +52,13 @@ public class AdminController {
         return "admin/editUser";
     }
 
-    // Обновление пользователя
     @PostMapping("/edit")
     public String editUser(@ModelAttribute User user,
                            @RequestParam(required = false) Set<Long> roleIds) {
-        User existing = userService.findById(user.getId());
-        if (existing != null) {
-            // Если пароль не введён, оставляем старый
-            if (user.getPassword() == null || user.getPassword().isEmpty()) {
-                user.setPassword(existing.getPassword());
-            }
-            if (roleIds != null && !roleIds.isEmpty()) {
-                user.setRoles(roleService.findByIds(roleIds));
-            }
-            userService.save(user);
-        }
+        userService.updateUser(user, roleIds);
         return "redirect:/admin";
     }
 
-    // Удаление пользователя
     @GetMapping("/delete/{id}")
     public String deleteUser(@PathVariable Long id) {
         userService.deleteById(id);
